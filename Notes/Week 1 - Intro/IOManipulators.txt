@@ -1,0 +1,19 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+
+//non sticky example: set width - setw(#of spaces)
+cout << "Hello" << endl;
+cout << setw(15) << "Hello" << "Hello" << "Hello" << endl; //pushes start of text 15 blank characters over
+cout << setw(15) << "Hello" << setw(15) << "Hello" << endl; //setw is not sticky
+cout << left << setw(15) << "Hello" << setw(15) << "Hello" << "Hello" << endl; //left justify is sticky
+cout << left << setw(15) << "Hello" << right << setw(15) << "Hello" << "Hello" << endl; //left can be overwritten
+
+//sticky example: setfill - setfill('character')
+cout << setfill('*'); //must use single quotes
+cout << setw(15) << "Hello" << setw(15) << "Hello" << endl;
+
+}

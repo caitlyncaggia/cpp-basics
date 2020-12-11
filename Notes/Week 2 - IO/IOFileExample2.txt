@@ -1,0 +1,25 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main()
+{
+
+ifstream inputFile("input.txt", ios::in);
+int x, y; //can declare more than one variable per line
+
+//can check validity of input file (or that the input file exists)
+if (!inputFile) //! (bang) is like ~ (tilda) in matlab, means "not"
+ {
+  cout << "Error in file" << endl;
+ }
+else
+ {
+  cout << "We are good to go" << endl;
+  while (inputFile >> x >> y ) //while loops just like matlab, starts/ends with curly brackets
+   {
+     cout << "x = " << x << "y = " << y << endl;
+   } //end of while
+ } //end of if
+
+} //end of main

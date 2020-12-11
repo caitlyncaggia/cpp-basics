@@ -1,0 +1,14 @@
+#include <iostream>
+
+int main()
+{
+int value;
+
+std::cout << "Please input a number: ";
+std::cin >> value;
+
+std::cout << "The number you entered was: " << value << std::endl;
+
+return 0;
+
+}

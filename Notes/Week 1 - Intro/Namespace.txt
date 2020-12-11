@@ -1,0 +1,22 @@
+#include <iostream>
+
+namespace JeffSpace //gives variables first and last names
+{
+int value1; //defined before main, global variable that works anywhere in the file
+int value2;
+};
+
+int main()
+{
+
+int localVar; //local variable, works only in main
+
+std::cout << "Input value into global var: ";
+std:cin >> value1;
+std::cout << "The global var is: " << value1 << std::endl;
+
+std::cout << "Input value into JeffSpace value1: ";
+std:cin >> JeffSpace::value1;
+std::cout << "The JeffSpace value1 is: " << JeffSpace::value1 << std::endl;
+
+}

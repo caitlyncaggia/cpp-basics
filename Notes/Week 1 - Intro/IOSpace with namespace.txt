@@ -1,0 +1,15 @@
+#include <iostream>
+using namespace std; //no longer have to specify everything with standard!
+
+int main()
+{
+int value;
+
+cout << "Please input a number: ";
+cin >> value;
+
+cout << "The number you entered was: " << value << endl;
+
+return 0;
+
+}

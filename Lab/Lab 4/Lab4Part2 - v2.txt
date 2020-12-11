@@ -1,0 +1,150 @@
+#include "mbed.h"
+#include "PinDetect.h"
+#include "uLCD_4DGL.h"
+#include "SDFileSystem.h"
+#include "temperature.h"
+#include <string>
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+
+SDFileSystem sd(p5, p6, p7, p8, "sd");
+uLCD_4DGL uLCD(p28, p27, p29); // create a global lcd object
+//declare objects for pins used with pushbuttons
+PinDetect pb1(p18);
+PinDetect pb2(p19);
+PinDetect pb3(p20);
+enum InputType {NO, YES, STAY};
+InputType input = YES;
+char currLetter = 'Z';
+
+//function prototypes
+char encodeLetter(char, int);
+string readKey();
+void displayConversion(char, char);
+void displayCurrent(char);
+int getCount();
+
+// Callback routine is interrupt activated by a debounced pb3 hit
+void pb3_hit_callback (void)
+{
+// ADD CODE HERE THAT YOU WANT TO RUN WHEN INTERUPT IS GENERATED
+    input = STAY;
+    //int count = getCount();
+    int count = 0;
+    char newLetter;
+    newLetter = encodeLetter(currLetter, count);
+    displayConversion(currLetter, newLetter);
+    
+}
+// Callback routine is interrupt activated by a debounced pb1 hit
+void pb1_hit_callback (void) 
+{
+    input = YES;
+
+// ADD CODE HERE THAT YOU WHAT TO RUN WHEN INTERUPT IS GENERATED
+    if (::currLetter == 'Z')
+    {
+        ::currLetter = 'A';
+        displayCurrent(::currLetter);
+    }
+    else
+    {
+        ::currLetter = ::currLetter + 1;
+        displayCurrent(::currLetter);
+    }
+}
+// Callback routine is interrupt activated by a debounced pb2 hit
+void pb2_hit_callback (void)
+{
+    input = NO;
+    if (::currLetter == 'A')
+    {
+        ::currLetter = 'Z';
+        displayCurrent(::currLetter);
+    }
+    else
+    {
+        ::currLetter = ::currLetter - 1;
+        displayCurrent(::currLetter);
+    }
+}
+
+//global functions
+string readKey()
+{
+    char key[1000];
+    FILE *fp = fopen("/sd/OTP.txt", "r");
+    if(fp == NULL) {
+        uLCD.printf("Open Error!!!\n");
+    } else {
+        fscanf(fp, "%s", key);
+        fclose(fp);
+    }
+    return(key);
+}
+
+char encodeLetter(char c, int i)
+{
+    string key = readKey();
+    int currentNum = c;
+    int factor = key[i];
+    int newNum = (currentNum + factor) % 26 + 65;
+    char encoded = newNum;
+    return(encoded);
+}
+
+void displayConversion(char c, char n)
+{
+    uLCD.locate(0,0);
+    uLCD.text_width(5);
+    uLCD.text_height(5);
+    uLCD.printf("%c\n%c",c, n);
+}
+
+void displayCurrent(char c)
+{
+    uLCD.locate(0,0);
+    uLCD.text_width(5);
+    uLCD.text_height(5);
+    uLCD.printf("%c\n\n",c);
+}
+
+int getCount()
+{
+    string count;
+    FILE *fp = fopen("/sd/positionCipherSender.txt", "r");
+    if(fp == NULL) {
+        uLCD.printf("Open Error!!!\n");
+    } else {
+        fscanf(fp, "%s", count);
+        fclose(fp);
+    }
+    int countNum;
+    countNum = atoi(count.c_str());
+    FILE *fp2 = fopen("/sd/positionCipherSender.txt", "w");
+    fprintf(fp2, "%i", countNum+1); // this updates the count file
+    fclose(fp2);
+    return(countNum);
+}
+
+int main() {
+ pb1.mode(PullUp);
+ pb2.mode(PullUp);
+ pb3.mode(PullUp);
+
+ // Delay for initial pullup to take effect
+ wait(.01);
+
+ // Setup Interrupt callback functions for a pb hit
+ pb1.attach_deasserted(&pb1_hit_callback);
+ pb2.attach_deasserted(&pb2_hit_callback);
+ pb3.attach_deasserted(&pb3_hit_callback);
+ 
+ // Start sampling pb inputs using interrupts
+ pb1.setSampleFrequency(); //default is 20KHz sampling
+ pb2.setSampleFrequency();
+ pb3.setSampleFrequency();
+ // pushbuttons now setup and running
+
+ }

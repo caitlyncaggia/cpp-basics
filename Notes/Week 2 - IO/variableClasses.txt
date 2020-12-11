@@ -1,0 +1,29 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+
+int intValue;
+float floatValue; // single precision floating point number
+
+cout << "Input a decimal value " ;
+cin >> intValue;
+
+//manipulators: hex, oct, dec, fixed, scientific, setprecision(#)
+
+cout << "The value as a hex number is: " << hex << intValue << endl;
+cout << "The value in decimal is: " << intValue << endl; //hex is sticky, still displays as hex
+
+cout << dec;
+cout << The value in decimal is: " << intValue << endl; //now displays as hex, then decimal
+
+cout << "Please input a real number";
+cin >> floatValue;
+cout << setprecision(2); //setprecision will round
+cout << "The number you entered is: " << scientific << floatValue << endl;
+
+return 0;
+
+}

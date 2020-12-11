@@ -1,0 +1,62 @@
+#include <iostream>
+using namespace std;
+
+struct Element
+{
+  int data;
+  Element * nextPtr;
+}; //end of Element
+
+void PrintList(Element *); // Function prototype
+
+void DeleteList(Element *);
+
+int main()
+{
+  Element * startPtr = NULL;
+  Element * currPtr = NULL;
+
+ //make the first element in the linked list
+  startPtr = new Element;
+  currPtr = startPtr;
+  currPtr->data = 1;
+   //alternative: (*currPtr).data = 1;
+  
+ //use a for loop to make the rest of the elements
+  for (int i = 2; i <= 5; i++)
+  {
+   currPtr->nextPtr = new Element;   //create a new element
+   currPtr = currPrt->nextPtr;       //move currPtr
+   currPtr->data = i;                //put data into new element   
+  } // end of for loop
+
+ //set the pointer after the last element to NULL
+  currPtr->nextPtr = NULL;
+
+ //Display the linked list
+  PrintList(startPtr);
+  
+  //Delete your stuff so you don't clog up the heap!!
+  DeleteList(startPtr);
+
+} // end of main
+
+void DeleteList(Element * curr)
+{
+  Element * next;
+  while (curr != NULL)
+  {
+    next = curr->nextPtr;
+    delete curr;
+    curr = next;
+  } //end of while loop
+} //end of DeleteList
+
+void PrintList(Element * begin)
+{
+  while (begin != NULL)
+  {
+    cout << "Data: " << begin->data << endl;
+	begin = begin->nextPtr;
+  } //end while loop
+} //end PrintList

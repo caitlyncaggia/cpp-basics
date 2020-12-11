@@ -1,0 +1,18 @@
+#include <iostream> //use cout, cin
+#include <fstream> //declare an ofstream object, ifstream object
+using namespace std;
+
+int main()
+{
+
+ofstream outputFile("output.txt", ios::out);
+
+int value = 12;
+
+outputFile << "Hello File! " << endl; //endl acts as a new line indicator
+outputFile << value << endl; //will convert number into ASCII for text file
+
+outputFile.close();
+//good practice to close file
+
+}

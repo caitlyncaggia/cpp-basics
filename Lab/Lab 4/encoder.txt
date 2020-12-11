@@ -1,0 +1,90 @@
+#include "mbed.h"
+#include "PinDetect.h"
+#include "uLCD_4DGL.h"
+#include "SDFileSystem.h"
+#include "temperature.h"
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <ctime>
+#include <cstdlib>
+
+uLCD_4DGL uLCD(p28, p27, p29);
+SDFileSystem sd(p5, p6, p7, p8, "sd");
+PinDetect pb1(p18);
+PinDetect pb2(p19);
+PinDetect pb3(p20);
+enum InputType {U, D, GO};
+InputType input = D;
+string message;
+
+//function prototypes
+char encodeLetter(char, int);
+string readKey();
+void displayConversion(char, char);
+void displayCurrent(char);
+int getCount();
+
+
+int main()
+{
+    // int count = getCount();
+    int count = 0; //since my part one doesn't work I just hardcoded count for now. I have a member function that should read count from the sender.txt
+    char currentLetter = 'A'; //this would be updated by buttons, but you have to start somewhere
+    char newLetter;
+    newLetter = encodeLetter(currentLetter, count);
+    displayConversion(currentLetter, newLetter); //instructions make it sound like you only display newletter if you hit the third button  
+}
+
+//global functions
+string readKey()
+{
+    char key[1000];
+    FILE *fp = fopen("/sd/mydir/OTP.txt", "r");
+    if(fp == NULL) {
+        uLCD.printf("Open Error!!!\n");
+    } else {
+        fscanf(fp, "%s", key);
+        fclose(fp);
+    }
+    return(key);
+}
+
+char encodeLetter(char c, int i)
+{
+    string key = readKey();
+    int currentNum = c;
+    int factor = key[i];
+    int newNum = (currentNum + factor) % 26 + 65;
+    char encoded = newNum;
+    return(encoded);
+}
+
+void displayConversion(char c, char n)
+{
+    uLCD.locate(0,0);
+    uLCD.text_width(5);
+    uLCD.text_height(5);
+    uLCD.printf("%c\n%c",c, n);
+}
+
+void displayCurrent(char c)
+{
+    uLCD.locate(0,0);
+    uLCD.text_width(5);
+    uLCD.text_height(5);
+    uLCD.printf("%c\n%c",c);
+}
+
+int getCount()
+{
+    int count = 0;
+    FILE *fp = fopen("/sd/mydir/positionCipherSender.txt", "r");
+    if(fp == NULL) {
+        uLCD.printf("Open Error!!!\n");
+    } else {
+        fscanf(fp, "%i", count);
+        fclose(fp);
+    }
+    return(count);
+}
